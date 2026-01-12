@@ -1,13 +1,48 @@
 import { useState } from "react";
 import { UserPlus, Eye, EyeOff } from "lucide-react";
+import toast from 'react-hot-toast';
+import Axios from "../utils/Axios";
+import summaryApi from "../common/SummaryApi";
+import { Link, useNavigate } from 'react-router-dom';
 
 const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({ name: "", email: "", password: "" });
+  const navigate = useNavigate();
 
-  // You will add your own:
-  // const [formData, setFormData] = useState({ name: "", email: "", password: "" });
-  // const handleChange = (e) => { ... }
-  // const handleSubmit = (e) => { ... }
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => {
+      return {
+        ...prev,
+        [name]: value
+      }
+    })
+
+  }
+  const handleSubmit = async (e) => {
+    e.preventdefault();
+    try {
+      const response = await Axios({
+        ...summaryApi.registerRider,
+        data:formData
+      })
+      if (response.data.error) {
+        toast.error(response.data.message)
+      }
+      if (response.data.success) {
+        toast.success(response.data.message)
+        setFormData({
+          name: "",
+          email: "",
+          password: ""
+        })
+        navigate("/login")
+      }
+    } catch (error) {
+      toast.error(error)
+    }
+  }
 
   return (
     <section className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-indigo-100 px-4">
@@ -22,16 +57,18 @@ const Signup = () => {
           </p>
         </div>
 
-        <form onSubmit={() => {}} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
           {/* Full Name */}
           <div className="relative">
             <input
               type="text"
               name="name"
+              id="name"
+              value={formData.name}
               placeholder=" "
               className="peer w-full border border-gray-300 rounded-xl px-4 pt-5 pb-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
               required
-              // onChange={handleChange}
+              onChange={handleChange}
             />
             <label className="absolute left-4 top-2 text-gray-500 text-sm transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:top-2 peer-focus:text-sm peer-focus:text-indigo-600">
               Full Name
@@ -46,7 +83,7 @@ const Signup = () => {
               placeholder=" "
               className="peer w-full border border-gray-300 rounded-xl px-4 pt-5 pb-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
               required
-              // onChange={handleChange}
+              onChange={handleChange}
             />
             <label className="absolute left-4 top-2 text-gray-500 text-sm transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:top-2 peer-focus:text-sm peer-focus:text-indigo-600">
               Email address
@@ -61,7 +98,7 @@ const Signup = () => {
               placeholder=" "
               className="peer w-full border border-gray-300 rounded-xl px-4 pt-5 pb-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
               required
-              // onChange={handleChange}
+              onChange={handleChange}
             />
             <label className="absolute left-4 top-2 text-gray-500 text-sm transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:top-2 peer-focus:text-sm peer-focus:text-indigo-600">
               Password

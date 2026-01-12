@@ -1,10 +1,13 @@
 import { motion } from "framer-motion";
+import economyImg from "../assets/economy.webp"
+import premiumImg from "../assets/premium.webp"
+import sharedImg from "../assets/shared.webp" 
 
 const Rides = () => {
   const rides = [
-    { title: "Economy Ride", price: "₹100 - ₹300", img: "https://images.unsplash.com/photo-1549924230-66b8f32b4b8b" },
-    { title: "Premium Ride", price: "₹300 - ₹800", img: "https://images.unsplash.com/photo-1606851093258-19f1ff3f60b8" },
-    { title: "Shared Ride", price: "₹50 - ₹150", img: "https://images.unsplash.com/photo-1525609004556-c46c7d6cf023" },
+    { title: "Economy Ride", price: "₹100 - ₹300", img: economyImg },
+    { title: "Premium Ride", price: "₹300 - ₹800", img: premiumImg },
+    { title: "Shared Ride", price: "₹50 - ₹150", img: sharedImg },
   ];
 
   return (

@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import au from "../assets/au.png"
 
 const About = () => {
   return (
@@ -8,7 +9,7 @@ const About = () => {
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8 }}
-          src="https://images.unsplash.com/photo-1517949908114-7202b3b51e2e?auto=format&fit=crop&w=800&q=80"
+          src={au}
           alt="About us"
           className="rounded-2xl shadow-xl"
         />

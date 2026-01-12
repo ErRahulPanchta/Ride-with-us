@@ -1,6 +1,9 @@
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import image1 from "../assets/map.png"
+import apImg from "../assets/ap.png"
+
 
 const Home = () => {
   const navigate = useNavigate();
@@ -36,7 +39,7 @@ const Home = () => {
           className="flex-1"
         >
           <img
-            src="https://images.unsplash.com/photo-1605902711622-cfb43c4437e1?auto=format&fit=crop&w=900&q=80"
+            src={image1}
             alt="Ride Illustration"
             className="rounded-2xl shadow-xl w-full"
           />
@@ -50,7 +53,7 @@ const Home = () => {
           {[
             { title: "Fast Booking", img: "https://images.unsplash.com/photo-1523966211575-eb4a01e7dd51", desc: "Book rides instantly with our intuitive app experience." },
             { title: "Trusted Drivers", img: "https://images.unsplash.com/photo-1549924231-f129b911e442", desc: "All our drivers are verified for safety and reliability." },
-            { title: "Affordable Prices", img: "https://images.unsplash.com/photo-1616279968824-55d1a4c5b8a3", desc: "Transparent pricing and no hidden fees — ever." }
+            { title: "Affordable Prices", img: apImg, desc: "Transparent pricing and no hidden fees — ever." }
           ].map((f, i) => (
             <motion.div
               key={i}
@@ -59,7 +62,11 @@ const Home = () => {
               transition={{ duration: 0.6, delay: i * 0.2 }}
               className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition"
             >
-              <img src={`${f.img}?auto=format&fit=crop&w=600&q=80`} alt={f.title} className="h-48 w-full object-cover" />
+              <img
+                src={/^https?:\/\//.test(f.img) ? `${f.img}?auto=format&fit=crop&w=600&q=80` : f.img}
+                alt={f.title}
+                className="h-48 w-full object-cover"
+              />
               <div className="p-6">
                 <h3 className="text-lg font-semibold text-gray-800">{f.title}</h3>
                 <p className="text-gray-600 mt-2 text-sm">{f.desc}</p>
