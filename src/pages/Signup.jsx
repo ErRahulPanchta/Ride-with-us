@@ -1,136 +1,168 @@
 import { useState } from "react";
 import { UserPlus, Eye, EyeOff } from "lucide-react";
-import toast from 'react-hot-toast';
+import toast from "react-hot-toast";
 import Axios from "../utils/Axios";
 import summaryApi from "../common/SummaryApi";
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 const Signup = () => {
+  const [role, setRole] = useState(null); // "rider" | "driver"
   const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState({ name: "", email: "", password: "" });
+
+  const [formData, setFormData] = useState({
+    full_name: "",
+    email: "",
+    phone_number: "",
+    password: "",
+    license_number: ""
+  });
+
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => {
-      return {
-        ...prev,
-        [name]: value
-      }
-    })
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
 
-  }
   const handleSubmit = async (e) => {
-    e.preventdefault();
-    try {
-      const response = await Axios({
-        ...summaryApi.registerRider,
-        data:formData
-      })
-      if (response.data.error) {
-        toast.error(response.data.message)
-      }
-      if (response.data.success) {
-        toast.success(response.data.message)
-        setFormData({
-          name: "",
-          email: "",
-          password: ""
-        })
-        navigate("/login")
-      }
-    } catch (error) {
-      toast.error(error)
-    }
+  e.preventDefault();
+
+  try {
+    const api =
+      role === "driver"
+        ? summaryApi.registerDriver
+        : summaryApi.registerRider;
+
+    const payload =
+      role === "driver"
+        ? formData
+        : {
+            full_name: formData.full_name,
+            email: formData.email,
+            phone_number: formData.phone_number,
+            password: formData.password
+          };
+
+    await Axios({
+      ...api,
+      data: payload
+    });
+
+    toast.success("Account created successfully");
+
+    navigate("/login");
+  } catch (error) {
+    toast.error(error?.response?.data?.message || "Signup failed");
   }
+};
+
 
   return (
     <section className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-indigo-100 px-4">
       <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
         <div className="text-center mb-8">
-          <div className="flex justify-center mb-3">
-            <UserPlus className="text-indigo-600" size={40} />
-          </div>
-          <h2 className="text-3xl font-bold text-gray-800">Create Account</h2>
-          <p className="text-gray-500 text-sm mt-1">
-            Sign up to get started with RideWithUs
-          </p>
+          <UserPlus className="mx-auto text-indigo-600" size={40} />
+          <h2 className="text-3xl font-bold text-gray-800 mt-2">
+            Create Account
+          </h2>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Full Name */}
-          <div className="relative">
+        {/* ROLE SELECTION */}
+        {!role && (
+          <div className="space-y-4">
+            <button
+              onClick={() => setRole("rider")}
+              className="w-full py-3 border border-indigo-600 text-indigo-600 rounded-xl hover:bg-indigo-600 hover:text-white transition"
+            >
+              Sign up as Rider
+            </button>
+            <button
+              onClick={() => setRole("driver")}
+              className="w-full py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition"
+            >
+              Sign up as Driver
+            </button>
+          </div>
+        )}
+
+        {/* FORM */}
+        {role && (
+          <form onSubmit={handleSubmit} className="space-y-6">
             <input
               type="text"
-              name="name"
-              id="name"
-              value={formData.name}
-              placeholder=" "
-              className="peer w-full border border-gray-300 rounded-xl px-4 pt-5 pb-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+              name="full_name"
+              placeholder="Full Name"
               required
               onChange={handleChange}
+              className="w-full border rounded-xl px-4 py-3"
             />
-            <label className="absolute left-4 top-2 text-gray-500 text-sm transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:top-2 peer-focus:text-sm peer-focus:text-indigo-600">
-              Full Name
-            </label>
-          </div>
 
-          {/* Email */}
-          <div className="relative">
             <input
               type="email"
               name="email"
-              placeholder=" "
-              className="peer w-full border border-gray-300 rounded-xl px-4 pt-5 pb-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+              placeholder="Email"
               required
               onChange={handleChange}
+              className="w-full border rounded-xl px-4 py-3"
             />
-            <label className="absolute left-4 top-2 text-gray-500 text-sm transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:top-2 peer-focus:text-sm peer-focus:text-indigo-600">
-              Email address
-            </label>
-          </div>
 
-          {/* Password */}
-          <div className="relative">
             <input
-              type={showPassword ? "text" : "password"}
-              name="password"
-              placeholder=" "
-              className="peer w-full border border-gray-300 rounded-xl px-4 pt-5 pb-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+              type="tel"
+              name="phone_number"
+              placeholder="Phone Number"
               required
               onChange={handleChange}
+              className="w-full border rounded-xl px-4 py-3"
             />
-            <label className="absolute left-4 top-2 text-gray-500 text-sm transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:top-2 peer-focus:text-sm peer-focus:text-indigo-600">
-              Password
-            </label>
+
+            {role === "driver" && (
+              <input
+                type="text"
+                name="license_number"
+                placeholder="License Number"
+                required
+                onChange={handleChange}
+                className="w-full border rounded-xl px-4 py-3"
+              />
+            )}
+
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                placeholder="Password"
+                required
+                onChange={handleChange}
+                className="w-full border rounded-xl px-4 py-3"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-3 text-gray-500"
+              >
+                {showPassword ? <EyeOff /> : <Eye />}
+              </button>
+            </div>
+
+            <button
+              type="submit"
+              className="w-full py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition"
+            >
+              Create {role === "driver" ? "Driver" : "Rider"} Account
+            </button>
+
             <button
               type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-4 top-3 text-gray-500 hover:text-indigo-600"
+              onClick={() => setRole(null)}
+              className="w-full text-sm text-gray-500 hover:underline"
             >
-              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              Go back
             </button>
-          </div>
-
-          {/* Submit */}
-          <button
-            type="submit"
-            className="w-full py-3 bg-indigo-600 text-white rounded-xl font-medium hover:bg-indigo-700 transition transform hover:scale-[1.01]"
-          >
-            Create Account
-          </button>
-        </form>
-
-        {/* Footer Text */}
-        <p className="text-center text-gray-600 text-sm mt-6">
-          Already have an account?{" "}
-          <a
-            href="/login"
-            className="text-indigo-600 font-medium hover:underline"
-          >
-            Log in
-          </a>
-        </p>
+          </form>
+        )}
       </div>
     </section>
   );

@@ -1,19 +1,37 @@
 import axios from "axios";
-import { baseURL } from "../common/SummaryApi";
 
 const Axios = axios.create({
-    baseURL: baseURL,
-    withCredentials: true
-})
-
-
-
-Axios.interceptors.request.use((config) => {
-    const token = localStorage.getItem("token");
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
+  baseURL: "http://localhost:8080",
+  withCredentials: false
 });
+
+/* REQUEST INTERCEPTOR */
+Axios.interceptors.request.use(
+  (config) => {
+    const authRaw = localStorage.getItem("auth");
+
+    if (authRaw) {
+      const auth = JSON.parse(authRaw);
+      if (auth?.token) {
+        config.headers.Authorization = `Bearer ${auth.token}`;
+      }
+    }
+
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+/* RESPONSE INTERCEPTOR */
+Axios.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem("auth");
+      window.location.href = "/login";
+    }
+    return Promise.reject(error);
+  }
+);
 
 export default Axios;
