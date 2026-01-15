@@ -18,7 +18,7 @@ const Home = () => {
           </h1>
 
           <button
-            onClick={() => navigate(isAuthenticated ? "/rides" : "/login/rider")}
+            onClick={() => navigate(isAuthenticated ? "/rides" : "/signup")}
             className="bg-indigo-600 text-white px-6 py-3 rounded-xl flex items-center gap-2"
           >
             Get Started <ArrowRight />
